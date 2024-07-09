@@ -1,0 +1,11 @@
+<div>
+  <script>
+    // Agrega el evento antes de descargar la página
+    window.addEventListener('beforeunload', function (event) {
+      // Cancela el evento de descarga predeterminado
+      event.preventDefault()
+      // Firefox requiere que se establezca un valor para el evento
+      event.returnValue = ''
+    })
+  </script>
+</div>

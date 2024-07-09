@@ -1,0 +1,52 @@
+{% load static %}
+
+<!-- drawer component -->
+<div id="drawer-navigation" class="md:hidden fixed top-0 left-0 w-64 md:w-80 lg:w-80 h-screen p-4 overflow-y-auto transition-transform -translate-x-full bg-primary z-40" tabindex="-1" aria-labelledby="drawer-navigation-label">
+  {% comment %} <h5 id="drawer-navigation-label" class="text-base font-semibold text-white">Menu</h5> {% endcomment %}
+  {% comment %} <label for="my-drawer" aria-label="close sidebar" class="drawer-overlay"></label> {% endcomment %}
+  <div class="flex justify-end items-center">
+    <button type="button" data-drawer-hide="drawer-navigation" aria-controls="drawer-navigation" class="btn btn-primary btn-sm btn-circle items-center">
+      <i class="fas fa-times"></i>
+      <span class="sr-only">Close menu</span>
+    </button>
+  </div>
+  <div class="mt-2 flex justify-sart items-center gap-5">
+    <div class="w-48" align="center">
+      {% comment %} <img class="ml-4" src="{% static 'img/logo_blanco.png' %}" alt="Ar holdings" /> {% endcomment %}
+      <img class="ml-4" width="50%" src="https://www.tadadelivery.com/sites/g/files/wnfebl9601/files/styles/webp/public/TaDa/tada.png.webp?itok=nwy2JqQt" alt="Tada" />
+    </div>
+  </div>
+  <div class="py-4 overflow-y-aut mt-4">
+    <ul class="menu menu-lg menu-vertical p-0 text-white text-lg [&_li>*]:rounded-md [&_details>*]:rounded-md">
+      {% for section in drawer %}
+        <div class="divider divider-accent text-md">{{ section.section }}</div>
+        {% for item in section.childs %}
+          <li class="mt-1">
+            {% if item.children %}
+            <details {% if item.active %}open{% endif %}>
+              <summary class="{% if item.active %}text-primary bg-base-100 hover:text-primary hover:bg-base-100{% else %}hover:bg-base-100 hover:text-primary{% endif %}">
+                <i class="{{ item.icon }}"></i> <span class="ms-3">{{ item.name }}</span>
+              </summary>
+              <ul>
+                {% for child in item.children %}
+                <li class="mt-1">
+                  <a href="{% if child.href %}{{ child.href }}{% endif %}" class="{% if child.active %}text-primary bg-base-100 hover:text-primary hover:bg-base-100{% else %}hover:bg-base-100 hover:text-primary{% endif %}">
+                    <i class="{{ child.icon }}"></i>
+                    <span class="ms-3">{{ child.name }}</span>
+                  </a>
+                </li>
+                {% endfor %}
+              </ul>
+            </details>
+            {% else %}
+            <a href="{{ item.href }}" class="{% if item.active %}text-primary bg-base-100 hover:text-primary hover:bg-base-100 active:text-primary active:bg-base-100{% else %}hover:bg-base-100 hover:text-primary{% endif %}">
+              <i class="{{ item.icon }}"></i>
+              <span class="ms-3">{{ item.name }}</span>
+            </a>
+            {% endif %}
+          </li>
+        {% endfor %}
+      {% endfor %}
+    </ul>
+  </div>
+</div>

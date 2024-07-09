@@ -1,0 +1,26 @@
+{% load static %}
+
+<div class="p-4">
+  <div class="card w-72 h-56 bg-base-100 shadow-xl image-full">
+    <figure class="w-full">
+      <img src="{% static product.image %}" alt="img_producto" class="object-cover h-48 w-full" />
+    </figure>
+    <div class="card-body flex items-center">
+      <h2 class="font-bold text-center"><span class="py-1 px-3">{{ product.name }}</span></h2>
+
+      {% if not product.is_fisical %}
+        <div class="badge badge-secondary">Digital</div>
+      {% else %}
+        <div class="badge badge-secondary">Físico</div>
+      {% endif %}
+
+      <div class="card-actions justify-center mt-4">
+        <div class="grid items-center text-yellow-500 text-sm">
+          <!-- Icono de estrella -->
+          <span class="ml-1">{{ product.price }} Puntos</span>
+          <button class="btn btn-primary btn-sm mt-2">Comprar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

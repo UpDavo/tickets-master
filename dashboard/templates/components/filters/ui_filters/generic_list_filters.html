@@ -1,0 +1,27 @@
+<div class="card bg-base-100 shadow-md mb-4">
+  <div class="card-body overflow-hidden py-4 md:py-3">
+    <form method="GET" action="{% url list_url %}">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-2 justify-start">
+        <div class="flex gap-2 items-center">
+          <label for="start_date" class="md:text-right">Inicio:</label>
+          <input class="input input-bordered w-full" type="date" id="start_date" name="start_date" />
+        </div>
+
+        <div class="flex gap-2 items-center">
+          <label for="end_date" class="md:text-right mt-2 md:mt-0">Fin:</label>
+          <input class="input input-bordered w-full" type="date" id="end_date" name="end_date" />
+        </div>
+
+        {% comment %} <div tabindex="0" class="collapse collapse-arrow border border-base-300 bg-base-200 rounded-lg">
+          <input type="checkbox" />
+          <div class="collapse-title text-lg font-medium">Filtros Personalizados</div>
+          <div class="collapse-content">
+            <p>tabindex="0" attribute is necessary to make the div focusable</p>
+          </div>
+        </div> {% endcomment %}
+
+        <button class="btn btn-secondary mt-2 md:mt-0" type="submit"><i class="fas fa-filter"></i> Filtrar</button>
+      </div>
+    </form>
+  </div>
+</div>

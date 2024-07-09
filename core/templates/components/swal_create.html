@@ -1,0 +1,20 @@
+<script>
+  function confirmDelete(pk) {
+    Swal.fire({
+      title: '¿Estás seguro?',
+      html: '<p style="color: #555;">El item será guardado</p>',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#5f3ea8',
+      cancelButtonColor: '#e39424',
+      confirmButtonText: 'Sí, Guardar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const token = '{{ csrf_token }}'
+        const url = '{% url list_url %}'
+        window.location.href = url
+      }
+    })
+  }
+</script>

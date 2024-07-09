@@ -1,0 +1,29 @@
+<!-- Header -->
+<header class="shadow-md bg-primary p-2 text-white">
+  <div class="flex justify-between navbar shadow-sm">
+    <div class="flex items-center">
+      <button class="md:hidden btn btn-ghost text-lg" type="button" data-drawer-target="drawer-navigation" data-drawer-show="drawer-navigation" aria-controls="drawer-navigation"><i class="fas fa-bars"></i> Menú</button>
+      <button class="hidden md:block btn btn-ghost text-xl ml-3"><i class="fas fa-bars"></i></button>
+      <h2 class="pr-2 md:block hidden font-bold uppercase">Hola! {{ request.user.names }}</h2>
+    </div>
+    <div class="flex gap-1">
+      <h2 class="pr-2 font-bold uppercase">{{request.user.total_points}} Puntos</h2>
+      <div class="dropdown dropdown-end">
+        <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar placeholder online">
+          <div class="w-10 rounded-full ring ring-secondary ring-offset-base-100 ring-offset-2">
+            <div class="bg-neutral text-neutral-content w-full h-full">
+              {% with request.user.names|first as first_letter %}
+                <span class="text-3xl">{{ first_letter }}</span>
+              {% endwith %}
+            </div>
+          </div>
+        </div>
+        <ul tabindex="0" class="mt-3 z-[1] p-2 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52">
+          <li>
+            <a href="{% url 'accounts:logout' %}">Cerrar sesión</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</header>

@@ -1,0 +1,31 @@
+<div class="mx-2 mb-6 mt-2 flex justify-between items-center">
+  <div>
+    <h2 class="text-lg font-bold">Lista de {{ nombre }}</h2>
+  </div>
+  <div class="flex justify-end gap-2">
+    {% if key == 'upload' %}
+      <div>
+        <a href="{% url upload_url %}" class="btn btn-primary btn-sm py-3 h-auto">
+          <i class="fas fa-file-upload"></i>
+          Subir Excel
+        </a>
+      </div>
+
+      <div>
+        <a href="{% url create_url %}" class="btn btn-primary btn-sm py-3 h-auto">
+          <i class="fas fa-plus"></i>
+          Crear Nuevo
+        </a>
+      </div>
+    {% endif %}
+
+    {% if key == 'nocreate' %}
+      <div>
+        <a href="{% url upload_url %}" class="btn btn-primary btn-sm py-3 h-auto">
+          <i class="fas fa-file-upload"></i>
+          Subir Excel
+        </a>
+      </div>
+    {% endif %}
+  </div>
+</div>

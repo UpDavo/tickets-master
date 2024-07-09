@@ -1,0 +1,47 @@
+{% extends 'layout/dashboard_layout.html' %}
+
+{% block content %}
+  <div class="card bg-base-100 shadow-md flex justify-center items-center">
+    <form class="w-full card-body" action="" method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      {% if form.errors %}
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+          <strong class="font-bold">¡Error!</strong>
+          <ul>
+            {% for error in form.errors %}
+              <li>{{ error }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% endif %}
+      <div class="grid md:grid-cols-2 grid-cols-1 gap-3 justify-items-center items-center">
+        {% for field in form %}
+          <div class="w-full mt-1">
+            <label class="font-bold mb-3" for="{{ field.id_for_label }}">{{ field.label }}</label><br />
+            {{ field }}
+          </div>
+        {% endfor %}
+
+        {% if formset %}
+          {% for subform in formset %}
+            {% for field in subform %}
+              <div class="w-full mt-1">
+                <label class="font-bold mb-3" for="{{ field.id_for_label }}">{{ field.label }}</label><br />
+                {{ field }}
+              </div>
+            {% endfor %}
+          {% endfor %}
+        {% endif %}
+      </div>
+
+      <div class="flex gap-4">
+        <div class="w-full">
+          <button type="submit" class="btn btn-primary mt-4 btn-block"><i class="fas fa-save"></i>Guardar Item</button>
+        </div>
+        <div class="w-16">
+          <a href="{{ request.META.HTTP_REFERER }}" class="btn btn-secondary mt-4"><i class="fas fa-arrow-left"></i></a>
+        </div>
+      </div>
+    </form>
+  </div>
+{% endblock %}

@@ -1,0 +1,19 @@
+/* Estilos para el drawer */
+.custom-drawer {
+  display: none; /* Lo ocultamos inicialmente en pantallas grandes */
+}
+
+/* Estilos para la barra lateral */
+.custom-sidebar {
+  display: block; /* La mostramos inicialmente en pantallas grandes */
+}
+
+/* Media query para pantallas pequeñas (mobile) */
+@media (max-width: 768px) {
+  .custom-drawer {
+    display: block; /* Mostramos el drawer en pantallas pequeñas */
+  }
+  .custom-sidebar {
+    display: none; /* Ocultamos la barra lateral en pantallas pequeñas */
+  }
+}

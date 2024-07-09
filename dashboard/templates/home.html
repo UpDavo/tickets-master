@@ -1,0 +1,14 @@
+{% extends 'layout/dashboard_layout.html' %}
+
+{% block content %}
+  <div class="mt-64 flex justify-center items-center">
+    <div class="grid place-items-center">
+      <h1 class="text-2xl mb-3 font-bold text-center">Aún no cuenta con métricas actualizadas</h1>
+      {% comment %} <div id="status_badge" class="badge badge-error badge-outline badge-md">Rechazado</div> {% endcomment %}
+      <a href="{% url 'dashboard:products' %}" class="btn btn-primary mt-8">
+        <i class="far fa-calendar-plus"></i>
+        Revisar sus productos
+      </a>
+    </div>
+  </div>
+{% endblock %}

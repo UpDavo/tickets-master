@@ -1,0 +1,31 @@
+<div>
+  <div class="card bg-base-100 shadow-sm mb-4 rounded-md">
+    <div class="card-body overflow-hidden py-4 md:py-6">
+      <form method="GET" action="{% url list_url %}" id="filter_form">
+        <div class="flex justify-between items-end gap-1">
+          <div class="w-full relative">
+            <label for="name" class="block text-left mb-1">Buscar por {{busqueda}}:</label>
+            <input class="input input-bordered w-full pl-10" type="text" id="name" name="name" />
+          </div>
+          <div class="flex gap-1 mt-2">
+            <div class="tooltip" data-tip="Buscar">
+              <button class="btn btn-primary" type="submit"><i class="fas fa-search"></i></button>
+            </div>
+            <div class="tooltip" data-tip="Reiniciar">
+              <button class="btn btn-primary" type="button" onclick="resetForm()"><i class="fas fa-sync-alt"></i></button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    function resetForm() {
+      document.getElementById('filter_form').reset()
+      const url = new URL(window.location.href)
+      url.search = ''
+      window.location.href = url.toString()
+    }
+  </script>
+</div>

@@ -1,0 +1,43 @@
+<script>
+  function confirmDelete(pk) {
+    Swal.fire({
+      title: '¿Estás seguro?',
+      html: '<p style="color: #555;">No podrás deshacer esta acción y toda la información asociada a este item será eliminada</p>',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#5f3ea8',
+      cancelButtonColor: '#e39424',
+      confirmButtonText: 'Sí, eliminarlo',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const token = '{{ csrf_token }}'
+        const url = '{% url delete_url pk=0 %}'.replace('0', pk)
+  
+        // Hacer la petición para eliminar el país con el id 'pk'
+        fetch(url, {
+          method: 'POST',
+          headers: {
+            'X-CSRFToken': token
+          }
+        })
+          .then((response) => {
+            if (response.ok) {
+              // Si la eliminación es exitosa, mostrar un mensaje y recargar la página
+              Swal.fire({ title: 'Eliminado', icon: 'success', confirmButtonColor: '#5f3ea8', confirmButtonText: 'Entendido' }).then(() => {
+                location.reload() // Recargar la página
+              })
+            } else {
+              // Si hay un error, mostrar un mensaje de error
+              Swal.fire('Error', 'Hubo un problema al intentar eliminar el item.', 'error')
+            }
+          })
+          .catch((error) => {
+            console.error('Error:', error)
+            // Mostrar un mensaje de error si ocurre un error inesperado
+            Swal.fire('Error', 'Hubo un problema al intentar eliminar el item.', 'error')
+          })
+      }
+    })
+  }
+</script>
