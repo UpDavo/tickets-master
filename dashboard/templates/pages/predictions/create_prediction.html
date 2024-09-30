@@ -1,0 +1,276 @@
+{% extends 'layout/dashboard_layout.html' %}
+{% load static %}
+{% include 'components/filters/ui_filters/user_ui_filters.html' %}
+{% block content %}
+
+<div class="overflow-x-auto rounded-md shadow-md p-6">
+  <h1 class="text-2xl font-bold mb-4">Predecir evento</h1>
+  <form id="prediction-form" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <!-- CSRF token -->
+      {% csrf_token %}
+
+      <!-- Artist Name -->
+      <label class="flex flex-col w-full">
+          <span class="mb-1">Nombre del Artista</span>
+          <input type="text" name="artist_name" placeholder="Nombre del Artista" class="input input-bordered w-full" required>
+      </label>
+
+      <!-- Artist Gender -->
+      <label class="flex flex-col w-full">
+          <span class="mb-1">Género del Artista</span>
+          <select name="artist_gender" class="select select-bordered w-full" required>
+              <option value="" disabled selected>Seleccione</option>
+              <option value="male">Masculino</option>
+              <option value="female">Femenino</option>
+              <option value="other">Otro</option>
+          </select>
+      </label>
+
+      <!-- Artist Age -->
+      <label class="flex flex-col w-full">
+          <span class="mb-1">Edad del Artista</span>
+          <input type="number" name="artist_age" placeholder="Edad del Artista" class="input input-bordered w-full" required>
+      </label>
+
+      <!-- Artist Country -->
+      <label class="flex flex-col w-full">
+          <span class="mb-1">País del Artista</span>
+          <select name="artist_country" id="artist_country" class="select select-bordered w-full" required>
+              <option value="" disabled selected>Seleccione</option>
+              {% for country in countries %}
+                  <option value="{{ country.code }}">{{ country.name }}</option>
+              {% endfor %}
+          </select>
+      </label>
+
+      <!-- Artist Followers (default value of 1,000,000) -->
+      <label class="flex flex-col w-full">
+          <span class="mb-1">Seguidores del Artista</span>
+          <input type="number" name="artist_followers" placeholder="Seguidores del Artista" class="input input-bordered w-full" value="1000000" required>
+      </label>
+
+      <!-- Artist Genres (Select2) -->
+      <label class="flex flex-col w-full md:col-span-2">
+          <span class="mb-1">Géneros Musicales</span>
+          <select name="artist_genres" id="artist_genres_select" class="w-full" multiple="multiple" required>
+              {% for genre in genres %}
+                  <option value="{{ genre }}">{{ genre }}</option>
+              {% endfor %}
+          </select>
+      </label>
+
+      <!-- Event Country (from context['ubicacion_json']) -->
+      <label class="flex flex-col w-full">
+          <span class="mb-1">País del Evento</span>
+          <select name="event_country" id="event_country" class="select select-bordered w-full" required>
+              <option value="" disabled selected>Seleccione</option>
+              {% for country in countries_ubicacion %}
+                  <option value="{{ country }}">{{ country }}</option>
+              {% endfor %}
+          </select>
+      </label>
+
+      <!-- Event City (dependent on selected country) -->
+      <label class="flex flex-col w-full">
+          <span class="mb-1">Ciudad del Evento</span>
+          <select name="event_city" id="event_city" class="select select-bordered w-full" required>
+              <option value="" disabled selected>Seleccione</option>
+          </select>
+      </label>
+
+      <!-- Event Venue (dependent on selected city) -->
+      <label class="flex flex-col w-full">
+          <span class="mb-1">Lugar del Evento</span>
+          <select name="event_venue" id="event_venue" class="select select-bordered w-full" required>
+              <option value="" disabled selected>Seleccione</option>
+          </select>
+      </label>
+
+      <!-- Botón de Envío -->
+      <div class="md:col-span-2">
+          <button type="submit" class="btn btn-primary w-full">Comenzar la predicción</button>
+      </div>
+  </form>
+
+  <!-- Mostrar Predicciones -->
+  <div id="predictions-display" class="hidden mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+      <h2 class="text-xl font-bold md:col-span-2 mb-4">Predicciones</h2>
+      <div id="prediction-results" class="space-y-2 md:col-span-2"></div>
+      <div class="md:col-span-2">
+          <button id="save-prediction-btn" class="btn btn-secondary w-full mt-4">Guardar Predicción</button>
+      </div>
+  </div>
+</div>
+
+<!-- Incluir jQuery antes que otros scripts -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Incluir Select2 CSS y JS -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+<!-- Incluir SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    // Función para obtener el token CSRF
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            let cookies = document.cookie.split(';');
+            for (let i=0; i<cookies.length; i++) {
+                let cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length+1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length+1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    const csrftoken = getCookie('csrftoken');
+
+    // Almacenar datos de predicción
+    let predictionData = {};
+
+    $(document).ready(function() {
+        // Inicializar Select2 para Artist Genres
+        // Inicializar Select2 para Artist Genres con opción de agregar nuevos géneros
+        $('#artist_genres_select').select2({
+          placeholder: "Seleccione o agregue Géneros Musicales",
+          allowClear: true,
+          tags: true,
+          tokenSeparators: [',', ' '],
+        });
+
+
+        // Manejar el envío del formulario
+        $('#prediction-form').on('submit', function(event) {
+            event.preventDefault();
+
+            // Mostrar loader con SweetAlert2
+            Swal.fire({
+                title: 'Procesando Predicción',
+                text: 'Por favor espera mientras procesamos tu predicción.',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading()
+                }
+            });
+
+            // Obtener datos del formulario
+            var formData = $(this).serialize();
+
+            // Realizar petición AJAX para procesar la predicción
+            $.ajax({
+                url: '{% url "dashboard:process_prediction" %}',
+                type: 'POST',
+                data: formData,
+                headers: {'X-CSRFToken': csrftoken},
+                success: function(response) {
+                    // Cerrar el loader
+                    Swal.close();
+
+                    // Ocultar el formulario
+                    $('#prediction-form').hide();
+
+                    // Almacenar datos de la predicción
+                    predictionData = response.prediction_data;
+
+                    // Mostrar resultados
+                    var predictionsHtml = '';
+                    predictionsHtml += '<p><strong>Popularidad del Artista:</strong> ' + response.prediction_data.artist_popularity + '</p>';
+                    predictionsHtml += '<p><strong>Tickets del Evento:</strong> ' + response.prediction_data.event_tickets + '</p>';
+
+                    $('#prediction-results').html(predictionsHtml);
+                    $('#predictions-display').removeClass('hidden');
+
+                },
+                error: function(xhr, status, error) {
+                    Swal.fire('Error', 'Ocurrió un error al procesar tu predicción.', 'error');
+                }
+            });
+        });
+
+        // Manejar el clic en "Guardar Predicción"
+        $('#save-prediction-btn').on('click', function() {
+            // Mostrar loader
+            Swal.fire({
+                title: 'Guardando Predicción',
+                text: 'Por favor espera mientras guardamos tu predicción.',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading()
+                }
+            });
+
+            // Realizar petición AJAX para guardar la predicción
+            $.ajax({
+                url: '{% url "dashboard:save_prediction" %}',
+                type: 'POST',
+                data: JSON.stringify(predictionData),
+                contentType: 'application/json',
+                headers: {'X-CSRFToken': csrftoken},
+                success: function(response) {
+                    // Cerrar el loader
+                    Swal.close();
+
+                    // Redirigir a otra página
+                    window.location.href = '{% url "dashboard:predictions" %}';
+                },
+                error: function(xhr, status, error) {
+                    Swal.fire('Error', 'Ocurrió un error al guardar tu predicción.', 'error');
+                }
+            });
+        });
+
+        // Manejar selección dependiente de país-ciudad-venue
+        $('#event_country').on('change', function () {
+            var selectedCountry = $(this).val();
+            var citiesOptions = '<option value="" disabled selected>Ciudad del Evento</option>';
+            var ubicacion = {{ ubicacion_json | safe }}; // Recibe el JSON desde Django
+
+            // Buscar ciudades por país
+            for (var i = 0; i < ubicacion.length; i++) {
+                if (ubicacion[i].country === selectedCountry) {
+                    var cities = ubicacion[i].cities;
+                    for (var j = 0; j < cities.length; j++) {
+                        citiesOptions += '<option value="' + cities[j].city + '">' + cities[j].city + '</option>';
+                    }
+                    break;
+                }
+            }
+
+            $('#event_city').html(citiesOptions);
+            $('#event_venue').html('<option value="" disabled selected>Lugar del Evento</option>');
+        });
+
+        $('#event_city').on('change', function () {
+            var selectedCountry = $('#event_country').val();
+            var selectedCity = $(this).val();
+            var venuesOptions = '<option value="" disabled selected>Lugar del Evento</option>';
+            var ubicacion = {{ ubicacion_json | safe }}; // Recibe el JSON desde Django
+
+            // Buscar venues por ciudad
+            for (var i = 0; i < ubicacion.length; i++) {
+                if (ubicacion[i].country === selectedCountry) {
+                    var cities = ubicacion[i].cities;
+                    for (var j = 0; j < cities.length; j++) {
+                        if (cities[j].city === selectedCity) {
+                            var venues = cities[j].venues;
+                            for (var k = 0; k < venues.length; k++) {
+                                venuesOptions += '<option value="' + venues[k] + '">' + venues[k] + '</option>';
+                            }
+                            break;
+                        }
+                    }
+                    break;
+                }
+            }
+
+            $('#event_venue').html(venuesOptions);
+        });
+    });
+</script>
+
+{% endblock %}

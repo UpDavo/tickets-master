@@ -37,19 +37,11 @@ def generate_drawer(request, user):
             'section': 'Configuración',
             'childs': [
                 {
-                    "name": "Configuración de tiendas",
-                    "icon": "fas fa-shopping-bag",
-                    "href_native": ['dashboard:cities'],
-                    "active": is_active(request, ['cities']),
-                    "children": [
-                        {
-                            "name": "Ciudades",
-                            "href": reverse('dashboard:cities'),
-                            "href_native": ['dashboard:cities'],
-                            "icon": "fas fa-city",
-                            "active": is_active(request, ['cities'])
-                        }
-                    ]
+                    "name": "Predicciones",
+                    "href": reverse('dashboard:predictions'),
+                    "href_native": ['dashboard:predictions'],
+                    "icon": "fas fa-chart-line",
+                    "active": is_active(request, ['predictions'])
                 },
                 {
                     "name": "Accesos",

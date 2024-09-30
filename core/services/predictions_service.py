@@ -1,21 +1,22 @@
 from django.core.paginator import Paginator
-from core.models import City
+from core.models import Predictions
 # from django.urls import reverse_lazy
 
 
-class CityService:
-    
+class PredictionsService:
+
     @staticmethod
     def getList(request, name):
         # Obtener todos los usuarios
-        items = City.objects.order_by('-created_at').all()
+        items = Predictions.objects.order_by('-created_at').all()
 
         if name:
-            items = items.filter(name__icontains=name)
+            items = items.filter(artist_name__icontains=name)
 
         # Obtener los campos del modelo Usuario como una lista de objetos Field
-        fields = City._meta.fields
-        fields_to_include = ['id', 'created_at','name']
+        fields = Predictions._meta.fields
+        fields_to_include = ['id', 'created_at',
+                             'artist_name', 'artist_popularity']
         fields = [field for field in fields if field.name in fields_to_include]
 
         # Paginar los usuarios
@@ -23,10 +24,10 @@ class CityService:
         page_number = request.GET.get('page')
         page_obj = paginator.get_page(page_number)
 
-        list_url = 'dashboard:cities'
-        edit_url = 'dashboard:city_edit'
-        delete_url = 'dashboard:city_delete'
-        create_url = 'dashboard:city_create'
+        list_url = 'dashboard:predictions'
+        edit_url = 'dashboard:predictions_delete'
+        delete_url = 'dashboard:predictions_delete'
+        create_url = 'dashboard:predictions_create'
 
         # Obtener los valores de los campos para cada usuario
         object_data = []
@@ -38,13 +39,13 @@ class CityService:
 
     @staticmethod
     def checkExists(item):
-        exists = City.objects.filter(name=item).exists()
+        exists = Predictions.objects.filter(name=item).exists()
         return exists
 
     @staticmethod
     def getModel():
-        return City
+        return Predictions
 
     @staticmethod
-    def getAllCities():
-        return City.objects.all()
+    def getAll():
+        return Predictions.objects.all()

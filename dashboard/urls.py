@@ -20,11 +20,18 @@ urlpatterns = [
     path('roles/<int:pk>/edit/', EditRole.as_view(), name='role_edit'),
     path('roles/<int:pk>/delete/', DeleteRole.as_view(), name='role_delete'),
 
-    # Cities
-    path('cities', CityList.as_view(), name='cities'),
-    path('cities/create', CreateCity.as_view(), name='city_create'),
-    path('cities/<int:pk>/edit/', EditCity.as_view(), name='city_edit'),
-    path('cities/<int:pk>/delete/', DeleteCity.as_view(), name='city_delete'),
+    # predictions
+    path('predictions', PredictionsList.as_view(), name='predictions'),
+    path('predictions/create', CreatePredictions.as_view(),
+         name='predictions_create'),
+    path('predictions/<int:pk>/delete/',
+         DeletePredictions.as_view(), name='predictions_delete'),
+
+    # Ajax
+    path('predictions/process_prediction',
+         PredictionsList.as_view(), name='process_prediction'),
+    path('predictions/save_prediction',
+         PredictionsList.as_view(), name='save_prediction'),
 
 
     # Extras

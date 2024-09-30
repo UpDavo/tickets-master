@@ -10,6 +10,7 @@ class Command(BaseCommand):
         url_tuples = [
             ('Usuarios', 'dashboard:users'),
             ('Roles', 'dashboard:roles'),
+            ('Predictions', 'dashboard:predictions'),
         ]
 
         for name, url_name in url_tuples:
