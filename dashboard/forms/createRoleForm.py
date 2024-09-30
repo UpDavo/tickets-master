@@ -11,10 +11,11 @@ class CreateRoleForm(forms.ModelForm):
 
     class Meta:
         model = Role
-        fields = ['name', 'permissions']
+        fields = ['name','all_access', 'permissions']
         labels = {
             'name': 'Nombre del rol',
             'permissions': 'Permisos',
+            'all_access': 'Todos los accesos'
         }
         widgets = {
             'name': forms.TextInput(attrs={'class': 'input input-bordered input-primary w-full rounded', 'placeholder': 'Nombre'}),

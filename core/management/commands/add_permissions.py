@@ -8,12 +8,8 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         url_tuples = [
-            ('Inventario', 'dashboard:stocks'),
             ('Usuarios', 'dashboard:users'),
             ('Roles', 'dashboard:roles'),
-            ('Productos', 'dashboard:products'),
-            ('Puntos', 'dashboard:points'),
-            ('Facturas', 'dashboard:invoices'),
         ]
 
         for name, url_name in url_tuples:

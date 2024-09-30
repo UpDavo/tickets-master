@@ -27,5 +27,23 @@
         </a>
       </div>
     {% endif %}
+
+    {% if key == 'onlycreate' %}
+      <div>
+        <a href="{% url create_url %}" class="btn btn-primary btn-sm py-3 h-auto">
+          <i class="fas fa-plus"></i>
+          Crear Nuevo
+        </a>
+      </div>
+    {% endif %}
+
+    {% if key == 'downloadTable' %}
+      <div>
+        <a href="{% url 'dashboard:invoice_download_excel' %}" class="btn btn-primary btn-sm py-3 h-auto">
+          <i class="fas fa-download"></i>
+          Descargar Excel
+        </a>
+      </div>
+    {% endif %}
   </div>
 </div>

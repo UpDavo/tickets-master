@@ -24,7 +24,7 @@
       </div>
       <div class="flex gap-4">
         <div class="w-full">
-          <button type="submit" class="btn btn-primary mt-4 btn-block"><i class="fas fa-save"></i>Guardar Cambios</button>
+          <button type="submit" class="btn btn-primary mt-4 btn-block" {% if disabled_save %} disabled {% endif %}><i class="fas fa-save"></i>Guardar Cambios</button>
         </div>
         <div class="w-16">
           <a href="{{ request.META.HTTP_REFERER }}" class="btn btn-secondary mt-4"><i class="fas fa-arrow-left"></i></a>

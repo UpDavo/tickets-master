@@ -1,12 +1,12 @@
-from django.contrib.auth.decorators import login_required
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, View, UpdateView
 from django.shortcuts import render, HttpResponseRedirect, get_object_or_404, redirect
 from accounts.forms import CreateUserForm, UpdateUserForm
 from core.services.users_service import UsersService
-from django.conf import settings
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from core.utils.dispatch_permissions import custom_dispatch
+
 
 PERMISSION = 'dashboard:users'
 
@@ -15,16 +15,7 @@ class UsersList(TemplateView):
     template_name = 'pages/generic/generic_table_page.html'
 
     def dispatch(self, request, *args, **kwargs):
-        if settings.LOCAL:
-            return super().dispatch(request, *args, **kwargs)
-        else:
-            user = request.user
-            if not user.is_authenticated:
-                return login_required(login_url=reverse_lazy(settings.LOGIN))(super().dispatch)(request, *args, **kwargs)
-            if user.has_permission(PERMISSION):
-                return super().dispatch(request, *args, **kwargs)
-            else:
-                return HttpResponseRedirect(reverse_lazy(settings.NOT_ALLOWED))
+        return custom_dispatch(super().dispatch, request, PERMISSION, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -35,7 +26,7 @@ class UsersList(TemplateView):
             self.request, name)
 
         context['nombre'] = "Usuarios"
-        context['key'] = 'user'
+        context['key'] = 'onlycreate'
         context['busqueda'] = "nombre de usuario"
         context['fields'] = fields
         context['object_data'] = object_data
@@ -51,16 +42,7 @@ class UsersList(TemplateView):
 class DeleteUser(View):
 
     def dispatch(self, request, *args, **kwargs):
-        if settings.LOCAL:
-            return super().dispatch(request, *args, **kwargs)
-        else:
-            user = request.user
-            if not user.is_authenticated:
-                return login_required(login_url=reverse_lazy(settings.LOGIN))(super().dispatch)(request, *args, **kwargs)
-            if user.has_permission(PERMISSION):
-                return super().dispatch(request, *args, **kwargs)
-            else:
-                return HttpResponseRedirect(reverse_lazy(settings.NOT_ALLOWED))
+        return custom_dispatch(super().dispatch, request, PERMISSION, *args, **kwargs)
 
     def post(self, request, pk):
         userService = UsersService()
@@ -81,16 +63,7 @@ class EditUser(UpdateView):
     success_url = reverse_lazy('dashboard:users')
 
     def dispatch(self, request, *args, **kwargs):
-        if settings.LOCAL:
-            return super().dispatch(request, *args, **kwargs)
-        else:
-            user = request.user
-            if not user.is_authenticated:
-                return login_required(login_url=reverse_lazy(settings.LOGIN))(super().dispatch)(request, *args, **kwargs)
-            if user.has_permission(PERMISSION):
-                return super().dispatch(request, *args, **kwargs)
-            else:
-                return HttpResponseRedirect(reverse_lazy(settings.NOT_ALLOWED))
+        return custom_dispatch(super().dispatch, request, PERMISSION, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -103,16 +76,7 @@ class CreateUser(TemplateView):
     template_name = 'components/generic/generic_create.html'
 
     def dispatch(self, request, *args, **kwargs):
-        if settings.LOCAL:
-            return super().dispatch(request, *args, **kwargs)
-        else:
-            user = request.user
-            if not user.is_authenticated:
-                return login_required(login_url=reverse_lazy(settings.LOGIN))(super().dispatch)(request, *args, **kwargs)
-            if user.has_permission(PERMISSION):
-                return super().dispatch(request, *args, **kwargs)
-            else:
-                return HttpResponseRedirect(reverse_lazy(settings.NOT_ALLOWED))
+        return custom_dispatch(super().dispatch, request, PERMISSION, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
         form = CreateUserForm()
@@ -125,7 +89,7 @@ class CreateUser(TemplateView):
             user.save()
             return HttpResponseRedirect(reverse_lazy('dashboard:users'))
         else:
-            return render(request, self.template_name, {'form': form, 'nombre': 'Crear un País'})
+            return render(request, self.template_name, {'form': form, 'nombre': 'Crear un Usuario'})
 
 
 @csrf_exempt

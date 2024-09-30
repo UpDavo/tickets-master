@@ -1,0 +1,83 @@
+{% include 'components/filters/ui_filters/user_ui_filters.html' %}
+{% load static %}
+
+<div class="overflow-x-auto rounded-md shadow-md md:block hidden">
+  <table class="table table-zebra">
+    
+    <thead class="bg-primary text-white uppercase">
+      <tr>
+        {% for field in fields|slice:'1:' %}
+          <th>{{ field.verbose_name }}</th>
+        {% endfor %}
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Iterar sobre los objetos -->
+      {% for obj_data in object_data %}
+        <tr class="hover">
+          {% for value in obj_data|slice:'1:' %}
+            <!-- Aquí se salta el primer elemento -->
+
+            {% if forloop.counter0 == 0 %}
+              <td class="uppercase font-bold">
+                {{ value|date:'d/m/Y' }} <!-- Formatear como dd/mm/aaaa -->
+              </td>
+              {% elif activos and forloop.counter0 == 3 %}
+              {% if value %}
+              <td class="uppercase"><div class="badge badge-primary">Activo</div></td>
+              {% else %}
+              <td class="uppercase"><div class="badge badge-secondary">Inactivo</div></td>
+              {% endif %}
+
+            {% elif nombre == 'Botells' and forloop.counter0 == 3 %}
+                <td class="uppercase">
+                  <img class="w-14 h-12 object-cover" src="{% static value %}" alt="Product Image">
+                </td>
+            {% else %}
+              <td class="uppercase">{{ value|default_if_none:"None" }}</td>
+            {% endif %}
+          {% endfor %}
+        </tr>
+      {% endfor %}
+    </tbody>
+    <!-- foot -->
+    <tfoot class="bg-secondary text-white uppercase">
+      <tr>
+        {% for field in fields|slice:'1:' %}
+          <th>{{ field.verbose_name }}</th>
+        {% endfor %}
+      </tr>
+    </tfoot>
+  </table>
+</div>
+
+<div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 md:hidden">
+  {% for obj_data in object_data %}
+    <div class="card bg-base-100 shadow-md">
+      <div class="card-body">
+        {% for value in obj_data|slice:'1:' %}
+          <!-- Aquí se salta el primer elemento -->
+          {% if forloop.counter0 == 0 %}
+            <h2 class="card-title uppercase font-bold">{{ value|date:'d/m/Y' }}</h2>
+          {% elif activos and forloop.counter0 == 3 %}
+            <p class="uppercase">
+              {% if value %}
+                <div class="badge badge-primary badge-md">Activo</div>
+              {% else %}
+                <div class="badge badge-secondary badge-md">Inactivo</div>
+              {% endif %}
+            </p>
+          {% elif nombre == 'Productos' and forloop.counter0 == 4 %}
+            <p class="uppercase">
+              <img class="w-14 h-12 object-cover" src="{% static value %}" alt="Product Image">
+            </p>
+          {% else %}
+            <p class="uppercase">{{ value }}</p>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+  {% endfor %}
+</div>
+
+{% include 'components/paginator.html' %}

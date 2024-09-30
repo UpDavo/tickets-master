@@ -22,7 +22,7 @@ def has_permission(user, view_names):
 def generate_drawer(request, user):
     drawer = [
         {
-            'section': 'Productos',
+            'section': 'Dashboard',
             'childs': [
                 {
                     "name": "Dashboard",
@@ -30,13 +30,6 @@ def generate_drawer(request, user):
                     "href_native": ['dashboard:index'],
                     "icon": "fas fa-tachometer-alt",
                     "active": is_active(request, ['dashboard'])
-                },
-                {
-                    "name": "Facturas",
-                    "icon": "fas fa-file-invoice",
-                    "href": reverse('dashboard:invoices'),
-                    "href_native": ['dashboard:invoices'],
-                    "active": is_active(request, ['invoices']),
                 }
             ]
         },
@@ -44,25 +37,19 @@ def generate_drawer(request, user):
             'section': 'Configuración',
             'childs': [
                 {
-                    "name": "Puntos",
-                    "icon": "fas fa-coins",
-                    "href": reverse('dashboard:points'),
-                    "href_native": ['dashboard:points'],
-                    "active": is_active(request, ['points']),
-                },
-                {
-                    "name": "Productos",
-                    "icon": "far fa-clock",
-                    "href": reverse('dashboard:products'),
-                    "href_native": ['dashboard:products'],
-                    "active": is_active(request, ['products']),
-                },
-                {
-                    "name": "Stock",
-                    "href": reverse('dashboard:stocks'),
-                    "href_native": ['dashboard:stocks'],
-                    "icon": "fas fa-chart-bar",
-                    "active": is_active(request, ['stocks'])
+                    "name": "Configuración de tiendas",
+                    "icon": "fas fa-shopping-bag",
+                    "href_native": ['dashboard:cities'],
+                    "active": is_active(request, ['cities']),
+                    "children": [
+                        {
+                            "name": "Ciudades",
+                            "href": reverse('dashboard:cities'),
+                            "href_native": ['dashboard:cities'],
+                            "icon": "fas fa-city",
+                            "active": is_active(request, ['cities'])
+                        }
+                    ]
                 },
                 {
                     "name": "Accesos",

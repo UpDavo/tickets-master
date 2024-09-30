@@ -16,7 +16,7 @@ class UsersService:
         # Obtener los campos del modelo Usuario como una lista de objetos Field
         fields = User._meta.fields
         fields_to_include = ['id', 'last_login',
-                             'username', 'names', 'role', 'brand']
+                             'username', 'role']
         fields = [field for field in fields if field.name in fields_to_include]
 
         # Paginar los usuarios

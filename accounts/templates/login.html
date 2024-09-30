@@ -5,10 +5,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/x-icon" href="{% static 'img/favicon.jpeg' %}" />
+    {% comment %} <link rel="icon" type="image/x-icon" href="{% static 'img/tada-icon-white.png' %}" /> {% endcomment %}
+
     <title>
       {% block head_title %}
-        Inicio de Sesión | Arh Schedule
+        Inicio de Sesión
       {% endblock %}
     </title>
     {% include 'core/css.html' %}
@@ -17,7 +18,8 @@
     <div class="max-w-lg w-full md:mx-0 mx-6 bg-white rounded-lg shadow-lg overflow-hidden">
       <div class="px-6 py-16">
         <div class="text-center">
-          <img src="{% static 'img/tada-color.png' %}" alt="Logo" class="md:w-80 max-w-64 mx-auto mb-4" />
+          {% comment %} <img src="{% static 'img/tada-color.png' %}" alt="Logo" class="md:w-80 max-w-64 mx-auto mb-4" /> {% endcomment %}
+          <h2 class="font-bold text-3xl text-primary mt-2 mb-4">APP</h2>
           <h2 class="text-2xl font-semibold text-secondary">Iniciar Sesión</h2>
         </div>
         <form class="mt-8 space-y-6" action="" method="post">
@@ -32,9 +34,9 @@
             <div class="w-full">{{ form.username }}</div>
             <div class="w-full">{{ form.password }}</div>
             <button type="submit" class="btn btn-primary btn-block mt-2">Iniciar Sesión</button>
-            <div class="w-full text-center mt-2">
+            {% comment %} <div class="w-full text-center mt-2">
               <a href="{% url 'accounts:password_reset' %}">¿Olvidaste tu contraseña?</a>
-            </div>
+            </div> {% endcomment %}
           </div>
         </form>
       </div>

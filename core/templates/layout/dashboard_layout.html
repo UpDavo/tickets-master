@@ -5,11 +5,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/x-icon" href="{% static 'img/tada-icon-white.png' %}" />
+    {% comment %} <link rel="icon" type="image/x-icon" href="{% static 'img/tada-icon-white.png' %}" /> {% endcomment %}
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <title>
       {% block head_title %}
-        Club Tada
+        Dashboard
       {% endblock %}
     </title>
     {% include 'core/css.html' %}

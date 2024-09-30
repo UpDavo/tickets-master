@@ -4,10 +4,14 @@
   {% include 'components/generic/generic_table_header.html' %}
   {% if nombre == 'Stock' %}
     {% include 'components/stock/stock_action_list.html' %}
-  {% elif nombre == 'Facturas' %}
+  {% elif nombre == 'Picking' %}
     {% include 'components/invoice/invoice_action_list.html' %}
   {% elif nombre == 'Points' %}
     {% include 'components/points/points_action_list.html' %}
+  {% elif nombre == 'Órdenes' %}
+    {% include 'components/generic/generic_action_list_orders.html' %}
+  {% elif nombre == 'Clientes'%}
+    {% include 'components/generic/generic_action_list_none.html' %}
   {% else %}
     {% include 'components/generic/generic_action_list.html' %}
   {% endif %}

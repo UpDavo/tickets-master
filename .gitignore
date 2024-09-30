@@ -131,3 +131,9 @@ node_modules/
 local-cdn/
 .venv
 /venv/
+*/*.env
+package-lock.json
+package.json
+tailwind.config.js
+
+*.xlsx

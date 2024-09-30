@@ -1,10 +1,10 @@
-from django.contrib.auth.decorators import login_required
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, View, UpdateView
 from django.shortcuts import render, HttpResponseRedirect, get_object_or_404, redirect
 from dashboard.forms import CreateRoleForm
 from core.services.role_service import RoleService
-from django.conf import settings
+from core.utils.dispatch_permissions import custom_dispatch
+
 
 PERMISSION = 'dashboard:roles'
 
@@ -13,16 +13,7 @@ class RoleList(TemplateView):
     template_name = 'pages/generic/generic_table_page.html'
 
     def dispatch(self, request, *args, **kwargs):
-        if settings.LOCAL:
-            return super().dispatch(request, *args, **kwargs)
-        else:
-            user = request.user
-            if not user.is_authenticated:
-                return login_required(login_url=reverse_lazy(settings.LOGIN))(super().dispatch)(request, *args, **kwargs)
-            if user.has_permission(PERMISSION):
-                return super().dispatch(request, *args, **kwargs)
-            else:
-                return HttpResponseRedirect(reverse_lazy(settings.NOT_ALLOWED))
+        return custom_dispatch(super().dispatch, request, PERMISSION, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -38,7 +29,7 @@ class RoleList(TemplateView):
         # Pasar los datos de los objetos y los campos al contexto
         context['nombre'] = "Roles"
         context['busqueda'] = "nombre de rol"
-        context['key'] = "roles"
+        context['key'] = "onlycreate"
         context['fields'] = fields
         context['object_data'] = object_data
         context['page_obj'] = page_obj
@@ -53,16 +44,7 @@ class RoleList(TemplateView):
 class DeleteRole(View):
 
     def dispatch(self, request, *args, **kwargs):
-        if settings.LOCAL:
-            return super().dispatch(request, *args, **kwargs)
-        else:
-            user = request.user
-            if not user.is_authenticated:
-                return login_required(login_url=reverse_lazy(settings.LOGIN))(super().dispatch)(request, *args, **kwargs)
-            if user.has_permission(PERMISSION):
-                return super().dispatch(request, *args, **kwargs)
-            else:
-                return HttpResponseRedirect(reverse_lazy(settings.NOT_ALLOWED))
+        return custom_dispatch(super().dispatch, request, PERMISSION, *args, **kwargs)
 
     def post(self, request, pk):
         roleService = RoleService()
@@ -83,16 +65,7 @@ class EditRole(UpdateView):
     success_url = reverse_lazy('dashboard:roles')
 
     def dispatch(self, request, *args, **kwargs):
-        if settings.LOCAL:
-            return super().dispatch(request, *args, **kwargs)
-        else:
-            user = request.user
-            if not user.is_authenticated:
-                return login_required(login_url=reverse_lazy(settings.LOGIN))(super().dispatch)(request, *args, **kwargs)
-            if user.has_permission(PERMISSION):
-                return super().dispatch(request, *args, **kwargs)
-            else:
-                return HttpResponseRedirect(reverse_lazy(settings.NOT_ALLOWED))
+        return custom_dispatch(super().dispatch, request, PERMISSION, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -104,16 +77,7 @@ class CreateRole(TemplateView):
     template_name = 'components/roles/generic_checkbox_create.html'
 
     def dispatch(self, request, *args, **kwargs):
-        if settings.LOCAL:
-            return super().dispatch(request, *args, **kwargs)
-        else:
-            user = request.user
-            if not user.is_authenticated:
-                return login_required(login_url=reverse_lazy(settings.LOGIN))(super().dispatch)(request, *args, **kwargs)
-            if user.has_permission(PERMISSION):
-                return super().dispatch(request, *args, **kwargs)
-            else:
-                return HttpResponseRedirect(reverse_lazy(settings.NOT_ALLOWED))
+        return custom_dispatch(super().dispatch, request, PERMISSION, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
         form = CreateRoleForm()

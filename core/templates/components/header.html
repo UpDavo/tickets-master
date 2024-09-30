@@ -5,16 +5,17 @@
       <button class="md:hidden btn btn-ghost text-lg" type="button" data-drawer-target="drawer-navigation" data-drawer-show="drawer-navigation" aria-controls="drawer-navigation"><i class="fas fa-bars"></i> Menú</button>
       {% comment %} <h1 class="hidden md:block text-lg ml-5 font-bold uppercase">Ar Schedule</h1> {% endcomment %}
       <button class="hidden md:block btn btn-ghost text-xl ml-3"><i class="fas fa-bars"></i></button>
-      <h2 class="pr-2 font-bold uppercase">{{ request.user.names }}</h2>
     </div>
     <div class="flex-none gap-1">
-      
-      <h2 class="pr-2 font-bold uppercase">Puntos totales: {{request.user.total_points}}</h2>
+      {% comment %} <h2 class="pr-2 font-bold uppercase">Puntos totales: {{ request.user.total_points }}</h2> {% endcomment %}
+      <div class="hidden md:block">
+        <h2 class="pr-2 font-bold uppercase">{{ request.user.names }}</h2>
+      </div>
       <div class="dropdown dropdown-end">
         <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar placeholder online">
           <div class="w-10 rounded-full ring ring-secondary ring-offset-base-100 ring-offset-2">
             <div class="bg-neutral text-neutral-content w-full h-full">
-              {% with request.user.names|first as first_letter %}
+              {% with first_letter=request.user.names|first %}
                 <span class="text-3xl">{{ first_letter }}</span>
               {% endwith %}
             </div>

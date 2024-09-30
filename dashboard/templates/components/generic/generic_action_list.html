@@ -1,7 +1,7 @@
 {% include 'components/filters/ui_filters/user_ui_filters.html' %}
 {% load static %}
 
-<div class="overflow-x-auto rounded-md shadow-md">
+<div class="overflow-x-auto rounded-md shadow-md md:block hidden">
   <table class="table table-zebra">
     
     <thead class="bg-primary text-white uppercase">
@@ -30,11 +30,16 @@
               <td class="uppercase"><div class="badge badge-secondary">Inactivo</div></td>
               {% endif %}
 
-            {% elif nombre == 'Productos' and forloop.counter0 == 4 %}
-                <td class="uppercase">
-                  <img class="w-14 h-12 object-cover" src="{% static value %}" alt="Product Image">
-                </td>
-            {% else %}
+              {% elif nombre == 'Botellas' and forloop.counter0 == 3 %}
+                  <td class="uppercase">
+                      {% if value %}
+                          <img class="object-cover" style="width: 5rem;height: 8rem;" src="{{ value.url }}" alt="Product Image">
+                      {% else %}
+                          <span>No image available</span>
+                      {% endif %}
+                  </td>
+              {% else %}
+          
               <td class="uppercase">{{ value }}</td>
             {% endif %}
           {% endfor %}
@@ -57,6 +62,39 @@
       </tr>
     </tfoot>
   </table>
+</div>
+
+<div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 md:hidden">
+  {% for obj_data in object_data %}
+    <div class="card bg-base-100 shadow-md">
+      <div class="card-body">
+        {% for value in obj_data|slice:'1:' %}
+          <!-- Aquí se salta el primer elemento -->
+          {% if forloop.counter0 == 0 %}
+            <h2 class="card-title uppercase font-bold">{{ value|date:'d/m/Y' }}</h2>
+          {% elif activos and forloop.counter0 == 3 %}
+            <p class="uppercase">
+              {% if value %}
+                <div class="badge badge-primary badge-md">Activo</div>
+              {% else %}
+                <div class="badge badge-secondary badge-md">Inactivo</div>
+              {% endif %}
+            </p>
+          {% elif nombre == 'Productos' and forloop.counter0 == 4 %}
+            <p class="uppercase">
+              <img class="w-14 h-12 object-cover" src="{% static value %}" alt="Product Image">
+            </p>
+          {% else %}
+            <p class="uppercase">{{ value }}</p>
+          {% endif %}
+        {% endfor %}
+        <div class="card-actions justify-start mt-2">
+          <a href="{% url edit_url pk=obj_data.0 %}" class="btn btn-primary btn-xs btn-outline"><i class="fas fa-pencil-alt"></i></a>
+          <button onclick="confirmDelete('{{ obj_data.0 }}')" class="btn btn-error btn-xs btn-outline"><i class="fas fa-trash-alt"></i></button>
+        </div>
+      </div>
+    </div>
+  {% endfor %}
 </div>
 
 {% include 'components/paginator.html' %}
