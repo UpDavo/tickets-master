@@ -14,9 +14,9 @@ DEBUG = env.bool('DEBUG', default=True)
 ALLOWED_HOSTS = ['*']
 
 if env.bool('PROD', default=False):
-    ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+    ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'f3dd-2800-bf0-8014-9d-8c87-63c-34e1-35d.ngrok-free.app']
 
-# CSRF_TRUSTED_ORIGINS = ['*']
+CSRF_TRUSTED_ORIGINS = ['https://f3dd-2800-bf0-8014-9d-8c87-63c-34e1-35d.ngrok-free.app']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -78,17 +78,17 @@ DATABASES = {
     }
 }
 
-if env.bool('PROD', default=False):
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': env.str('DATABASE_NAME'),
-            'USER': env.str('DATABASE_USER'),
-            'PASSWORD': env.str('DATABASE_PASSWORD'),
-            'HOST': env.str('DATABASE_HOST'),
-            'PORT': env.str('DATABASE_PORT'),
-        }
-    }
+# if env.bool('PROD', default=False):
+#     DATABASES = {
+#         'default': {
+#             'ENGINE': 'django.db.backends.postgresql',
+#             'NAME': env.str('DATABASE_NAME'),
+#             'USER': env.str('DATABASE_USER'),
+#             'PASSWORD': env.str('DATABASE_PASSWORD'),
+#             'HOST': env.str('DATABASE_HOST'),
+#             'PORT': env.str('DATABASE_PORT'),
+#         }
+#     }
 
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
