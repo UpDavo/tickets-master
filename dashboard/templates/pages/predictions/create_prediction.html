@@ -1,14 +1,21 @@
 {% extends 'layout/dashboard_layout.html' %}
 {% load static %}
-{% include 'components/filters/ui_filters/user_ui_filters.html' %}
 {% block content %}
 
 <div class="overflow-x-auto rounded-md shadow-md p-6">
-  <h1 class="text-2xl font-bold mb-4">Predecir evento</h1>
-  <form id="prediction-form" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+  <div id="header_text">
+    <h1 class="text-2xl font-bold mb-4">Predecir evento</h1>
+  <p class="mb-6 marker:text-justify">Para predecir un evento exitoso en el ámbito musical, es fundamental tener en cuenta la edad del artista, la cantidad de 
+    seguidores que posee y los géneros musicales que interpreta. La edad puede influir en la conexión con ciertas audiencias, 
+    mientras que el número de seguidores refleja su popularidad y alcance en el mercado. Además, los géneros que canta determinan
+     el tipo de público al que atrae y pueden influir en la demanda del evento. Estos factores combinados permiten realizar una 
+     predicción más precisa sobre el posible éxito del evento.</p>
+  </div>
+  <form id="prediction-form">
       <!-- CSRF token -->
       {% csrf_token %}
 
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
       <!-- Artist Name -->
       <label class="flex flex-col w-full">
           <span class="mb-1">Nombre del Artista</span>
@@ -43,20 +50,20 @@
           </select>
       </label>
 
+      <!-- Artist Genres (Select2) -->
+      <label class="flex flex-col w-full md:col-span-2">
+        <span class="mb-1">Géneros Musicales</span>
+        <select name="artist_genres" id="artist_genres_select" class="w-full p-2" multiple="multiple" required>
+            {% for genre in genres %}
+                <option value="{{ genre }}">{{ genre }}</option>
+            {% endfor %}
+        </select>
+    </label>
+
       <!-- Artist Followers (default value of 1,000,000) -->
       <label class="flex flex-col w-full">
           <span class="mb-1">Seguidores del Artista</span>
           <input type="number" name="artist_followers" placeholder="Seguidores del Artista" class="input input-bordered w-full" value="1000000" required>
-      </label>
-
-      <!-- Artist Genres (Select2) -->
-      <label class="flex flex-col w-full md:col-span-2">
-          <span class="mb-1">Géneros Musicales</span>
-          <select name="artist_genres" id="artist_genres_select" class="w-full" multiple="multiple" required>
-              {% for genre in genres %}
-                  <option value="{{ genre }}">{{ genre }}</option>
-              {% endfor %}
-          </select>
       </label>
 
       <!-- Event Country (from context['ubicacion_json']) -->
@@ -85,16 +92,17 @@
               <option value="" disabled selected>Seleccione</option>
           </select>
       </label>
+    </div>
 
       <!-- Botón de Envío -->
-      <div class="md:col-span-2">
+      <div class="md:col-span-2 mt-6">
           <button type="submit" class="btn btn-primary w-full">Comenzar la predicción</button>
       </div>
   </form>
 
   <!-- Mostrar Predicciones -->
   <div id="predictions-display" class="hidden mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-      <h2 class="text-xl font-bold md:col-span-2 mb-4">Predicciones</h2>
+      <h2 class="text-3xl font-bold md:col-span-2 mb-4">Tu nueva tarjeta de Artista</h2>
       <div id="prediction-results" class="space-y-2 md:col-span-2"></div>
       <div class="md:col-span-2">
           <button id="save-prediction-btn" class="btn btn-secondary w-full mt-4">Guardar Predicción</button>
@@ -102,15 +110,9 @@
   </div>
 </div>
 
-<!-- Incluir jQuery antes que otros scripts -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
 <!-- Incluir Select2 CSS y JS -->
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
-<!-- Incluir SweetAlert2 -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
     // Función para obtener el token CSRF
@@ -131,7 +133,8 @@
     const csrftoken = getCookie('csrftoken');
 
     // Almacenar datos de predicción
-    let predictionData = {};
+    var predictionData = {};
+    var formDataJSON = {};
 
     $(document).ready(function() {
         // Inicializar Select2 para Artist Genres
@@ -161,6 +164,26 @@
             // Obtener datos del formulario
             var formData = $(this).serialize();
 
+            var formDataArray = $(this).serializeArray();
+            
+
+            $.map(formDataArray, function(item) {
+              if (formDataJSON[item.name]) {
+                // Check if the existing value is an array
+                if (!Array.isArray(formDataJSON[item.name])) {
+                  // If not, convert it into an array
+                  formDataJSON[item.name] = [formDataJSON[item.name]];
+                }
+                // Add the new value to the array
+                formDataJSON[item.name].push(item.value);
+              } else {
+                // If the property doesn't exist, create it
+                formDataJSON[item.name] = item.value;
+              }
+            });
+
+            //console.log(formDataJSON);
+
             // Realizar petición AJAX para procesar la predicción
             $.ajax({
                 url: '{% url "dashboard:process_prediction" %}',
@@ -173,14 +196,51 @@
 
                     // Ocultar el formulario
                     $('#prediction-form').hide();
-
+                    $('#header_text').hide();
+                    //console.log(response)
                     // Almacenar datos de la predicción
-                    predictionData = response.prediction_data;
+                    predictionData = response;
 
                     // Mostrar resultados
-                    var predictionsHtml = '';
-                    predictionsHtml += '<p><strong>Popularidad del Artista:</strong> ' + response.prediction_data.artist_popularity + '</p>';
-                    predictionsHtml += '<p><strong>Tickets del Evento:</strong> ' + response.prediction_data.event_tickets + '</p>';
+                    var predictionsHtml = `
+                    <div class="w-full mx-auto p-6 bg-base-200 rounded-lg shadow-md">
+                        <!-- Perfil del Artista -->
+                        <div class="md:flex grid gap-2 items-start">
+                          <div class="avatar">
+                            <div class="w-24 rounded-full">
+                              <img src="https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500" />
+                            </div>
+                          </div>
+                          <div>
+                            <h1 class="text-2xl font-bold">${formDataJSON.artist_name}</h1>
+                            <p class="text-gray-600">Seguidores: ${parseFloat(formDataJSON.artist_followers).toLocaleString('en-US')}</p>
+                            <p class="text-gray-600">Géneros Musicales: ${formDataJSON.artist_genres}</p>
+                          </div>
+                        </div>
+
+                        <!-- Popularidad -->
+                        <div class="mt-4">
+                          <h2 class="text-xl font-semibold">Popularidad</h2>
+                          <div class="w-full mt-2">
+                            <progress class="progress progress-primary w-full" value="${predictionData.artist_popularity}" max="100"></progress>
+                          </div>
+                          <p class="text-right text-gray-600 mt-1">${predictionData.artist_popularity}/100</p>
+                        </div>
+
+                        <!-- Sección de Evento -->
+                        <div class="mt-6">
+                          <h2 class="text-xl font-semibold">Próximo Evento</h2>
+                          <div class="grid grid-cols-2 mt-4 space-y-2">
+                            <p><strong>País del Evento:</strong> ${formDataJSON.event_country}</p>
+                            <p><strong>Ciudad del Evento:</strong> ${formDataJSON.event_city}</p>
+                            <p><strong>Estadio del Evento:</strong> ${formDataJSON.event_venue}</p>
+                            <p><strong>Cantidad de Tickets Predichos de Venta:</strong> ${parseFloat(predictionData.event_tickets).toLocaleString('en-US')}</p>
+                            <p><strong>Cantidad de Ganancia Predicha:</strong> ${parseFloat(predictionData.event_revenue).toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</p>
+                            <p><strong>Costo Promedio de la Entrada:</strong> ${parseFloat(predictionData.event_price).toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</p>
+                          </div>
+                        </div>
+                      </div>
+                    `;
 
                     $('#prediction-results').html(predictionsHtml);
                     $('#predictions-display').removeClass('hidden');
@@ -204,19 +264,27 @@
                 }
             });
 
+            const mergedData = { ...formDataJSON, ...predictionData };
+            console.log(mergedData)
+
             // Realizar petición AJAX para guardar la predicción
             $.ajax({
                 url: '{% url "dashboard:save_prediction" %}',
                 type: 'POST',
-                data: JSON.stringify(predictionData),
+                data: JSON.stringify(mergedData),
                 contentType: 'application/json',
                 headers: {'X-CSRFToken': csrftoken},
                 success: function(response) {
                     // Cerrar el loader
                     Swal.close();
+                    if (response.result == true) {
+                      window.location.href = '{% url "dashboard:predictions" %}';
+                    }else{
+                      Swal.fire('Error', 'Ocurrió un error al guardar tu predicción.' + response.error, 'error');
+                    }
 
                     // Redirigir a otra página
-                    window.location.href = '{% url "dashboard:predictions" %}';
+                    //window.location.href = '{% url "dashboard:predictions" %}';
                 },
                 error: function(xhr, status, error) {
                     Swal.fire('Error', 'Ocurrió un error al guardar tu predicción.', 'error');

@@ -3,20 +3,22 @@ from .timeStampedModel import TimeStampedModel
 
 
 class Predictions(TimeStampedModel):
-    artist_name = models.CharField(max_length=255)
-    artist_gender = models.CharField(max_length=255)
-    artist_age = models.IntegerField()  # Si la edad es un número entero
-    artist_country = models.CharField(max_length=255)
-    artist_followers = models.IntegerField()  # Si los seguidores son numéricos
-    artist_genres = models.CharField(max_length=255)
-    event_city = models.CharField(max_length=255)
-    event_country = models.CharField(max_length=255)
-    event_venue = models.CharField(max_length=255)
+    artist_name = models.CharField(max_length=255, default='Unknown Artist')
+    artist_gender = models.CharField(max_length=255, default='Unknown')
+    artist_age = models.IntegerField(default=0)
+    artist_country = models.CharField(
+        max_length=255, default='Unknown Country')
+    artist_followers = models.IntegerField(default=0)
+    artist_genres = models.CharField(max_length=255, default='Unknown Genre')
+    event_city = models.CharField(max_length=255, default='Unknown City')
+    event_country = models.CharField(max_length=255, default='Unknown Country')
+    event_venue = models.CharField(max_length=255, default='Unknown Venue')
 
-    # Generated
-    artist_popularity = models.IntegerField()
-    event_venue = models.IntegerField()
-    event_tickets = models.IntegerField()
+    # Campos Generados
+    artist_popularity = models.IntegerField(default=0)
+    event_tickets = models.IntegerField(default=0)
+    event_revenue = models.IntegerField(default=0)
+    event_price = models.FloatField(default=0.0)
 
     def __str__(self):
-        return self.artist_name  # Cambiado de `self.name` a `self.artist_name`
+        return self.artist_name

@@ -21,7 +21,7 @@ class AiService:
     def processPopularity(self, data):
         # data es un diccionario con las claves: 'Gender', 'Age', 'Country', 'Followers', 'Genres'
         # 'Genres' debe ser una lista de géneros
-        new_data = pd.DataFrame([data])
+        new_data = pd.DataFrame(data)
 
         # Convertir los géneros a listas únicas y en minúsculas
         new_data['Genres'] = new_data['Genres'].apply(
@@ -84,7 +84,7 @@ class AiService:
         # data es un diccionario con las claves: 'City', 'Country', 'Venue'
         # Agregamos la popularidad predicha al conjunto de datos
         data['Popularity'] = popularity
-        nueva_entrada = pd.DataFrame([data])
+        nueva_entrada = pd.DataFrame(data)
 
         # Predecir Revenue
         prediccion_rev = self.pipeline_rev_loaded.predict(nueva_entrada)

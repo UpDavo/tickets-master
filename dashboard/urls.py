@@ -29,9 +29,9 @@ urlpatterns = [
 
     # Ajax
     path('predictions/process_prediction',
-         PredictionsList.as_view(), name='process_prediction'),
+         process_prediction, name='process_prediction'),
     path('predictions/save_prediction',
-         PredictionsList.as_view(), name='save_prediction'),
+         save_prediction, name='save_prediction'),
 
 
     # Extras
